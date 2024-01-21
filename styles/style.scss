@@ -143,3 +143,70 @@ body {
     }
   }
 }
+
+.dashboard-container {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  padding: 0 20px;
+  gap: 20px;
+
+  @media screen and (min-width: 768px) {
+    grid-template-columns: 1fr 2fr;
+    padding: 0;
+  }
+
+  & .quiz-container {
+    background-color: $white;
+    padding: 20px;
+    overflow: hidden;
+
+    & h5 {
+      font-size: 20px;
+      font-weight: 700;
+      color: $dark;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    & .quiz-box {
+      padding: 10px;
+      height: 100%;
+      min-height: 400px;
+      max-height: 500px;
+      overflow-y: scroll;
+
+      & .quiz-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: 1px solid $gray;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        padding: 10px;
+
+        & .section-left h4 {
+          font-size: 16px;
+          font-weight: 600;
+          width: 280px;
+          color: $dark;
+          @include ellipsis();
+        }
+
+        & .section-left p {
+          font-size: 14px;
+          font-weight: 800;
+          color: #111;
+          width: 280px;
+          text-decoration: underline;
+          @include ellipsis();
+        }
+
+        & p {
+          font-size: 14px;
+          font-weight: 600;
+          color: $gray;
+        }
+      }
+    }
+  }
+}

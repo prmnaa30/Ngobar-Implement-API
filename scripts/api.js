@@ -18,9 +18,7 @@ export async function getQuestionById({ id = 10 }) {
     });
     const result = await response.json();
 
-    console.log({ result });
     return result?.data;
-
   } catch (error) {
     console.error("Error Nih: ", {
       error,
@@ -30,14 +28,15 @@ export async function getQuestionById({ id = 10 }) {
 
 export async function getQuestions() {
   try {
-    const response = await fetch(`${BASE_URL}/api/quiz`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const result = await response.json();
-    return result?.data;
+    // const response = await fetch(`${BASE_URL}/api/quiz`, {
+    //   method: "GET",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    // });
+
+    // const result = await response.json();
+    // return result?.data;
   } catch (error) {
     console.error("Error Nih: ", {
       error,

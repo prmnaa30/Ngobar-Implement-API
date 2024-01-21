@@ -16,3 +16,9 @@
   max-width: 450px;
   margin: 0 auto;
 }
+
+@mixin ellipsis() {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
