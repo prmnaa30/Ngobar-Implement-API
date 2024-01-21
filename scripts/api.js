@@ -6,18 +6,21 @@
  * bahkan untuk update data dan delete data ke API
  */
 
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "http://188.166.181.154";
 
 export async function getQuestionById({ id = 10 }) {
   try {
-    // const response = await fetch(`${BASE_URL}/api/quiz/${id}`, {
-    //   method: "GET",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    // });
-    // const result = await response.json();
-    // return result?.data;
+    const response = await fetch(`${BASE_URL}/api/quiz/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const result = await response.json();
+
+    console.log({ result });
+    return result?.data;
+
   } catch (error) {
     console.error("Error Nih: ", {
       error,
@@ -27,14 +30,14 @@ export async function getQuestionById({ id = 10 }) {
 
 export async function getQuestions() {
   try {
-    // const response = await fetch(`${BASE_URL}/api/quiz`, {
-    //   method: "GET",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    // });
-    // const result = await response.json();
-    // return result?.data;
+    const response = await fetch(`${BASE_URL}/api/quiz`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const result = await response.json();
+    return result?.data;
   } catch (error) {
     console.error("Error Nih: ", {
       error,
@@ -44,17 +47,17 @@ export async function getQuestions() {
 
 export async function createQuestion({ payload }) {
   try {
-    // const response = await fetch(`${BASE_URL}/api/quiz`, {
-    //   method: "POST",
-    //   body: JSON.stringify(payload),
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    // });
+    const response = await fetch(`${BASE_URL}/api/quiz`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-    // const result = await response.json();
+    const result = await response.json();
 
-    // return result;
+    return result;
   } catch (error) {
     console.error("Error Nih: ", {
       error,
