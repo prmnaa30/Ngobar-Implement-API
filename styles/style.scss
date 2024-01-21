@@ -206,6 +206,31 @@ body {
           font-weight: 600;
           color: $gray;
         }
+
+        & .section-right {
+          gap: 12px;
+
+          & .btn {
+            background-color: none;
+            padding: 8px 10px;
+            outline: none;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+          }
+
+          & svg {
+            stroke: #fff;
+          }
+
+          & .btn-edit {
+            background: #22c55e;
+          }
+
+          & .btn-delete {
+            background: #e11d48;
+          }
+        }
       }
     }
   }
