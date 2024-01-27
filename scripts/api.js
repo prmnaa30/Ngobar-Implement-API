@@ -46,17 +46,16 @@ export async function getQuestions() {
 
 export async function createQuestion({ payload }) {
   try {
-    // const response = await fetch(`${BASE_URL}/api/quiz`, {
-    //   method: "POST",
-    //   body: JSON.stringify(payload),
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    // });
+    const response = await fetch(`${BASE_URL}/api/quiz`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-    // const result = await response.json();
-
-    // return result;
+    const result = await response.json();
+    return result;
   } catch (error) {
     console.error("Error Nih: ", {
       error,
