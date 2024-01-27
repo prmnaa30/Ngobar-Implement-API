@@ -1,5 +1,11 @@
-import { getQuestions, createQuestion } from "./api.js";
-import { generateQuizItem } from "./utils/index.js";
+import {
+  getQuestions,
+  createQuestion,
+  deleteQuestionById,
+  getQuestionById,
+  updateQuestionById,
+} from "./api.js";
+import { generateElement, Icon } from "./utils/index.js";
 
 const quizContent = document.getElementById("quiz-content");
 
@@ -11,59 +17,58 @@ const inputQuestion = document.getElementById("form-question");
 const inputAnswer = document.getElementById("form-answer");
 const inputCategory = document.getElementById("form-category");
 const inputLanguage = document.getElementById("form-language");
-const submitButton = document.getElementById("form-submit");
+
+// Input id sebagai hidden input untuk menampung id dari data yang akan di update
+const inputId = document.getElementById("form-id");
+
+const submitButton = document.getElementById("button-submit");
 
 document.addEventListener("DOMContentLoaded", () => {
-  async function handleAllQuestion() {
+  // Fungsi untuk menghapus data
+  async function handleDeleteQuestion(id) {
     try {
-      const questions = await getQuestions();
+      const result = await deleteQuestionById({ id });
 
-      // Kalo tidak ada data maka jangan kirim apapun
-      if (!questions) return;
+      if (!result) return;
 
-      /**
-       * Di sini kita akan looping data yang ada di questions
-       * Lalu kita akan generate HTML nya
-       * Lalu kita akan masukkan ke dalam quizContent
-       */
-      quizContent.innerHTML = questions
-        .map((question) => {
-          return generateQuizItem({
-            id: question.id,
-            question: question.jokes,
-            answer: question.answer,
-            category: question.category,
-          });
-        })
-        .join("");
+      if (result?.code === 200) {
+        alert("Berhasil menghapus data");
+
+        window.location.reload();
+      }
     } catch (error) {
-      // Tangkap error jika gagal mengambil data di API
-      console.error("Ada error nih : ", {
+      console.error("Error ngirim Nih: ", {
         error,
       });
     }
   }
 
-  handleAllQuestion();
+  // Fungsi untuk menampilkan data berdasarkan id
+  async function handleShowQuestionById(id) {
+    try {
+      const result = await getQuestionById({ id });
 
-  submitButton.addEventListener("click", async (e) => {
-    /**
-     * e.preventDefault() adalah untuk mencegah
-     * form mengirim data ke halaman lain
-     */
-    e.preventDefault();
+      if (!result) return;
 
-    /**
-     * Kita akan mengambil data dari inputan
-     * Lalu value inputan tersebut akan kita masukkan ke dalam objek payload
-     */
-    const payload = {
-      jokes: inputQuestion?.value || "",
-      category: inputCategory?.value || "",
-      language: inputLanguage?.value || "",
-      answer: inputAnswer?.value || "",
-    };
+      inputQuestion.value = result?.jokes;
+      inputAnswer.value = result?.answer;
+      inputCategory.value = result?.category;
+      inputLanguage.value = result?.language;
+      inputId.value = result?.id;
 
+      submitButton.classList.remove("button-submit");
+      submitButton.classList.add("button-submit-edit");
+
+      submitButton.innerText = "Update";
+    } catch (error) {
+      console.error("Error ngirim Nih: ", {
+        error,
+      });
+    }
+  }
+
+  // Fungsi untuk menambahkan data
+  async function handleAddQuestion(payload) {
     try {
       /**
        * Kita akan panggil fungsi createQuestion yang sudah kita buat di file `api.js`
@@ -90,6 +95,157 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error ngirim Nih: ", {
         error,
       });
+    }
+  }
+
+  // Fungsi untuk mengupdate data
+  async function handleUpdateQuestionById(id, payload) {
+    try {
+      const result = await updateQuestionById({ id, payload });
+
+      if (!result) return;
+
+      if (result?.code === 200) {
+        alert("Berhasil mengupdate data");
+
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Error ngirim Nih: ", {
+        error,
+      });
+    }
+  }
+
+  // Fungsi untuk menampilkan data di dashboard
+  async function handleAllQuestion() {
+    try {
+      const questions = await getQuestions();
+
+      // Kalo tidak ada data maka jangan kirim apapun
+      if (!questions) return;
+
+      /**
+       * Di sini kita akan looping data yang ada di questions
+       * Lalu kita akan generate HTML nya
+       * Lalu kita akan masukkan ke dalam quizContent
+       */
+      questions.forEach((question) => {
+        // Kita buat element pembungkus quiz nya
+        const containerQuiz = generateElement({
+          tag: "div",
+          id: `quiz-${question?.id}`,
+          className: "quiz-item",
+        });
+
+        // Kita buat element pembungkus section kiri
+        const sectionLeftQuiz = generateElement({
+          tag: "div",
+          className: "section-left",
+        });
+
+        // Buat element h4 untuk menampilkan pertanyaan
+        const questionElement = generateElement({
+          tag: "h4",
+          id: "quiz-question",
+          value: question.jokes,
+        });
+
+        // Buat element p untuk menampilkan jawaban
+        const answerElement = generateElement({
+          tag: "p",
+          id: "quiz-answer",
+          value: question.answer,
+        });
+
+        // Kita buat juga element untuk quiz category nya
+        const categoryElement = generateElement({
+          tag: "p",
+          id: "quiz-category",
+          value: question.category,
+        });
+
+        // Sekarang kita masukan element h4 dan p ke dalam section kiri
+        sectionLeftQuiz.append(...[questionElement, answerElement]);
+
+        // Dan kita buat element pembungkus section kanan
+        const sectionRightQuiz = generateElement({
+          tag: "div",
+          className: "section-right",
+        });
+
+        // Buat element button untuk edit
+        const buttonEdit = generateElement({
+          tag: "button",
+          id: "button-edit",
+          className: "btn btn-edit",
+          elementHTML: Icon.update,
+        });
+
+        buttonEdit.addEventListener("click", async (e) => {
+          e.preventDefault();
+
+          handleShowQuestionById(question.id);
+        });
+
+        // Buat element button untuk delete
+        const buttonDelete = generateElement({
+          tag: "button",
+          id: "button-delete",
+          className: "btn btn-delete",
+          elementHTML: Icon.delete,
+        });
+
+        // Ketika tombol delete di klik maka akan menjalankan fungsi handleDeleteQuestion
+        buttonDelete.addEventListener("click", async (e) => {
+          e.preventDefault();
+
+          handleDeleteQuestion(question.id);
+        });
+
+        // Sekarang kita masukan element button edit dan delete ke dalam section kanan
+        sectionRightQuiz.append(...[buttonEdit, buttonDelete]);
+
+        // Terakhir kita masukan semua element ke dalam container quiz
+        containerQuiz.append(
+          ...[sectionLeftQuiz, categoryElement, sectionRightQuiz]
+        );
+
+        quizContent.appendChild(containerQuiz);
+      });
+    } catch (error) {
+      // Tangkap error jika gagal mengambil data di API
+      console.error("Ada error nih : ", {
+        error,
+      });
+    }
+  }
+
+  handleAllQuestion();
+
+  // Fungsi ketika tombol submit di klik maka akan mengirim data ke API untuk ditambahkan
+  submitButton.addEventListener("click", async (e) => {
+    /**
+     * e.preventDefault() adalah untuk mencegah
+     * form mengirim data ke halaman lain
+     */
+    e.preventDefault();
+
+    /**
+     * Kita akan mengambil data dari inputan
+     * Lalu value inputan tersebut akan kita masukkan ke dalam objek payload
+     */
+    const payload = {
+      jokes: inputQuestion?.value || "",
+      category: inputCategory?.value || "",
+      language: inputLanguage?.value || "",
+      answer: inputAnswer?.value || "",
+    };
+
+    if (inputId.value === "") {
+      handleAddQuestion(payload);
+    } else {
+      handleUpdateQuestionById(inputId.value, payload);
     }
   });
 });

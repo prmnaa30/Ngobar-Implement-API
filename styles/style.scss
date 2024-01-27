@@ -100,28 +100,20 @@ body {
           }
         }
       }
+
+      & .form-id {
+        display: none;
+      }
     }
   }
 
   & .card-footer {
     & .button-submit {
-      outline: none;
-      width: 100%;
-      margin-top: 20px;
-      margin-bottom: 10px;
-      padding: 12px 16px;
-      border-radius: 8px;
-      border: none;
-      background-color: $purple;
-      color: $white;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease-in-out;
+      @include buttonSubmit($purple);
+    }
 
-      &:hover {
-        background-color: darken($purple, 10%);
-      }
+    & .button-submit-edit {
+      @include buttonSubmit($orange);
     }
 
     & .footer-redirect {
@@ -208,8 +200,6 @@ body {
         }
 
         & .section-right {
-          gap: 12px;
-
           & .btn {
             border: none;
             background: none;
@@ -224,11 +214,12 @@ body {
           }
 
           & .btn-edit {
-            background: #fb923c;
+            background: $orange;
+            margin-right: 10px;
           }
 
           & .btn-delete {
-            background: #ef4444;
+            background: $red;
           }
         }
       }
