@@ -28,8 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
         value: response.answer,
       });
 
-      // Berikan value dari response.jokes ke element dengan ID 'question'
-      question.innerText = response.jokes || "Tunggu dulu...";
+      // Berikan value dari response.question ke element dengan ID 'question'
+      question.innerText = response.question || "Tunggu dulu...";
 
       // Tambahkan element span ke dalam element dengan ID 'question'
       question.appendChild(span);

@@ -1,8 +1,8 @@
 import {
   getQuestions,
   createQuestion,
-  deleteQuestionById,
   getQuestionById,
+  deleteQuestionById,
   updateQuestionById,
 } from "./api.js";
 import { generateElement, Icon } from "./utils/index.js";
@@ -17,6 +17,8 @@ const inputQuestion = document.getElementById("form-question");
 const inputAnswer = document.getElementById("form-answer");
 const inputCategory = document.getElementById("form-category");
 const inputLanguage = document.getElementById("form-language");
+
+const inputSearch = document.getElementById("form-search");
 
 // Input id sebagai hidden input untuk menampung id dari data yang akan di update
 const inputId = document.getElementById("form-id");
@@ -50,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!result) return;
 
-      inputQuestion.value = result?.jokes;
+      inputQuestion.value = result?.question;
       inputAnswer.value = result?.answer;
       inputCategory.value = result?.category;
       inputLanguage.value = result?.language;
@@ -121,98 +123,32 @@ document.addEventListener("DOMContentLoaded", () => {
   async function handleAllQuestion() {
     try {
       const questions = await getQuestions();
+      const filteredQuestions = [...questions];
 
       // Kalo tidak ada data maka jangan kirim apapun
       if (!questions) return;
 
-      /**
-       * Di sini kita akan looping data yang ada di questions
-       * Lalu kita akan generate HTML nya
-       * Lalu kita akan masukkan ke dalam quizContent
-       */
-      questions.forEach((question) => {
-        // Kita buat element pembungkus quiz nya
-        const containerQuiz = generateElement({
-          tag: "div",
-          id: `quiz-${question?.id}`,
-          className: "quiz-item",
-        });
+      inputSearch.addEventListener("keyup", (e) => {
+        e.preventDefault();
 
-        // Kita buat element pembungkus section kiri
-        const sectionLeftQuiz = generateElement({
-          tag: "div",
-          className: "section-left",
-        });
-
-        // Buat element h4 untuk menampilkan pertanyaan
-        const questionElement = generateElement({
-          tag: "h4",
-          id: "quiz-question",
-          value: question.jokes,
-        });
-
-        // Buat element p untuk menampilkan jawaban
-        const answerElement = generateElement({
-          tag: "p",
-          id: "quiz-answer",
-          value: question.answer,
-        });
-
-        // Kita buat juga element untuk quiz category nya
-        const categoryElement = generateElement({
-          tag: "p",
-          id: "quiz-category",
-          value: question.category,
-        });
-
-        // Sekarang kita masukan element h4 dan p ke dalam section kiri
-        sectionLeftQuiz.append(...[questionElement, answerElement]);
-
-        // Dan kita buat element pembungkus section kanan
-        const sectionRightQuiz = generateElement({
-          tag: "div",
-          className: "section-right",
-        });
-
-        // Buat element button untuk edit
-        const buttonEdit = generateElement({
-          tag: "button",
-          id: "button-edit",
-          className: "btn btn-edit",
-          elementHTML: Icon.update,
-        });
-
-        buttonEdit.addEventListener("click", async (e) => {
-          e.preventDefault();
-
-          handleShowQuestionById(question.id);
-        });
-
-        // Buat element button untuk delete
-        const buttonDelete = generateElement({
-          tag: "button",
-          id: "button-delete",
-          className: "btn btn-delete",
-          elementHTML: Icon.delete,
-        });
-
-        // Ketika tombol delete di klik maka akan menjalankan fungsi handleDeleteQuestion
-        buttonDelete.addEventListener("click", async (e) => {
-          e.preventDefault();
-
-          handleDeleteQuestion(question.id);
-        });
-
-        // Sekarang kita masukan element button edit dan delete ke dalam section kanan
-        sectionRightQuiz.append(...[buttonEdit, buttonDelete]);
-
-        // Terakhir kita masukan semua element ke dalam container quiz
-        containerQuiz.append(
-          ...[sectionLeftQuiz, categoryElement, sectionRightQuiz]
+        /**
+         * Ambil value dari inputan search nya
+         * Lalu kita gunakan method filter untuk mencari data yang sesuai dengan inputan search nya
+         * Lalu kita render ulang data nya
+         */
+        const searchTerm = inputSearch.value.trim().toLowerCase();
+        const filtered = filteredQuestions.filter(
+          (question) =>
+            question.question.toLowerCase().includes(searchTerm) ||
+            question.answer.toLowerCase().includes(searchTerm) ||
+            question.category.toLowerCase().includes(searchTerm) ||
+            question.language.toLowerCase().includes(searchTerm)
         );
 
-        quizContent.appendChild(containerQuiz);
+        renderQuestions(filtered);
       });
+
+      renderQuestions(questions);
     } catch (error) {
       // Tangkap error jika gagal mengambil data di API
       console.error("Ada error nih : ", {
@@ -222,6 +158,94 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   handleAllQuestion();
+
+  function renderQuestions(questions) {
+    quizContent.innerHTML = "";
+
+    questions.forEach((question) => {
+      // Kita buat element pembungkus quiz nya
+      const containerQuiz = generateElement({
+        tag: "div",
+        id: `quiz-${question?.id}`,
+        className: "quiz-item",
+      });
+
+      // Kita buat element pembungkus section kiri
+      const sectionLeftQuiz = generateElement({
+        tag: "div",
+        className: "section-left",
+      });
+
+      // Buat element h4 untuk menampilkan pertanyaan
+      const questionElement = generateElement({
+        tag: "h4",
+        id: "quiz-question",
+        value: question.question,
+      });
+
+      // Buat element p untuk menampilkan jawaban
+      const answerElement = generateElement({
+        tag: "p",
+        id: "quiz-answer",
+        value: question.answer,
+      });
+
+      // Kita buat juga element untuk quiz category nya
+      const categoryElement = generateElement({
+        tag: "p",
+        id: "quiz-category",
+        value: question.category,
+      });
+
+      // Sekarang kita masukan element h4 dan p ke dalam section kiri
+      sectionLeftQuiz.append(...[questionElement, answerElement]);
+
+      // Dan kita buat element pembungkus section kanan
+      const sectionRightQuiz = generateElement({
+        tag: "div",
+        className: "section-right",
+      });
+
+      // Buat element button untuk edit
+      const buttonEdit = generateElement({
+        tag: "button",
+        id: "button-edit",
+        className: "btn btn-edit",
+        elementHTML: Icon.update,
+      });
+
+      buttonEdit.addEventListener("click", async (e) => {
+        e.preventDefault();
+
+        handleShowQuestionById(question.id);
+      });
+
+      // Buat element button untuk delete
+      const buttonDelete = generateElement({
+        tag: "button",
+        id: "button-delete",
+        className: "btn btn-delete",
+        elementHTML: Icon.delete,
+      });
+
+      // Ketika tombol delete di klik maka akan menjalankan fungsi handleDeleteQuestion
+      buttonDelete.addEventListener("click", async (e) => {
+        e.preventDefault();
+
+        handleDeleteQuestion(question.id);
+      });
+
+      // Sekarang kita masukan element button edit dan delete ke dalam section kanan
+      sectionRightQuiz.append(...[buttonEdit, buttonDelete]);
+
+      // Terakhir kita masukan semua element ke dalam container quiz
+      containerQuiz.append(
+        ...[sectionLeftQuiz, categoryElement, sectionRightQuiz]
+      );
+
+      quizContent.appendChild(containerQuiz);
+    });
+  }
 
   // Fungsi ketika tombol submit di klik maka akan mengirim data ke API untuk ditambahkan
   submitButton.addEventListener("click", async (e) => {
@@ -236,7 +260,7 @@ document.addEventListener("DOMContentLoaded", () => {
      * Lalu value inputan tersebut akan kita masukkan ke dalam objek payload
      */
     const payload = {
-      jokes: inputQuestion?.value || "",
+      question: inputQuestion?.value || "",
       category: inputCategory?.value || "",
       language: inputLanguage?.value || "",
       answer: inputAnswer?.value || "",
