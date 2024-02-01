@@ -86,42 +86,24 @@ body {
         }
 
         & input {
-          outline: none;
           padding: 12px 16px;
-          border-radius: 8px;
-          border: 2px solid $light-gray;
-          font-size: 16px;
-          font-weight: 500;
-          color: $dark;
-          transition: all 0.3s ease-in-out;
-
-          &:focus {
-            border-color: $purple;
-          }
+          @include search();
         }
+      }
+
+      & .form-id {
+        display: none;
       }
     }
   }
 
   & .card-footer {
     & .button-submit {
-      outline: none;
-      width: 100%;
-      margin-top: 20px;
-      margin-bottom: 10px;
-      padding: 12px 16px;
-      border-radius: 8px;
-      border: none;
-      background-color: $purple;
-      color: $white;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease-in-out;
+      @include buttonSubmit($purple);
+    }
 
-      &:hover {
-        background-color: darken($purple, 10%);
-      }
+    & .button-submit-edit {
+      @include buttonSubmit($orange);
     }
 
     & .footer-redirect {
@@ -150,7 +132,7 @@ body {
   padding: 0 20px;
   gap: 20px;
 
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 900px) {
     grid-template-columns: 1fr 2fr;
     padding: 0;
   }
@@ -160,12 +142,29 @@ body {
     padding: 20px;
     overflow: hidden;
 
-    & h5 {
-      font-size: 20px;
-      font-weight: 700;
-      color: $dark;
-      text-align: center;
+    & .quiz-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       margin-bottom: 10px;
+
+      & h5 {
+        font-size: 20px;
+        font-weight: 700;
+        color: $dark;
+        text-align: center;
+      }
+
+      & input {
+        padding: 6px 10px;
+        font-size: 14px !important;
+
+        &::placeholder {
+          font-size: 14px;
+          color: $gray;
+        }
+        @include search();
+      }
     }
 
     & .quiz-box {
@@ -177,58 +176,74 @@ body {
 
       & .quiz-item {
         display: flex;
-        align-items: center;
+        flex-direction: column;
         justify-content: space-between;
         border: 1px solid $gray;
         border-radius: 8px;
         margin-bottom: 10px;
         padding: 10px;
 
-        & .section-left h4 {
-          font-size: 16px;
-          font-weight: 600;
-          width: 280px;
-          color: $dark;
-          @include ellipsis();
-        }
+        & .section-left {
+          & h4 {
+            font-size: 16px;
+            font-weight: 600;
+            width: 240px;
+            color: $dark;
+            @include ellipsis();
+          }
 
-        & .section-left p {
-          font-size: 14px;
-          font-weight: 800;
-          color: #111;
-          width: 280px;
-          text-decoration: underline;
-          @include ellipsis();
+          & p {
+            font-size: 14px;
+            font-weight: 800;
+            color: #111;
+            width: 240px;
+            text-decoration: underline;
+            @include ellipsis();
+          }
         }
 
         & p {
+          margin: 8px 0;
           font-size: 14px;
           font-weight: 600;
           color: $gray;
         }
 
         & .section-right {
-          gap: 12px;
-
           & .btn {
-            background-color: none;
+            border: none;
+            background: none;
             padding: 8px 10px;
             outline: none;
             border-radius: 8px;
-            border: none;
             cursor: pointer;
-          }
 
-          & svg {
-            stroke: #fff;
+            & svg {
+              stroke: #fff;
+            }
           }
 
           & .btn-edit {
-            background: #22c55e;
+            background: $orange;
+            margin-right: 5px;
           }
 
           & .btn-delete {
-            background: #e11d48;
+            background: $red;
+          }
+        }
+
+        @media screen and (min-width: 1024px) {
+          flex-direction: row;
+          align-items: center;
+
+          & .section-left h4,
+          .section-left p {
+            width: 260px;
+          }
+
+          & p {
+            margin: 0;
           }
         }
       }
